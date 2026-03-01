@@ -1,19 +1,18 @@
 {
-  "name": "multi-bot-open-branches",
+  "name": "main-requires-pr",
   "enforcement": "enabled",
   "target": {
     "branch_patterns": [
-      "bot-*",
-      "copilot/*"
+      "main"
     ]
   },
   "bypass_actors": [],
   "rules": {
     "block_force_pushes": true,
-    "block_deletions": false,
+    "block_deletions": true,
     "restrict_creation": false,
     "restrict_updates": false,
-    "require_pull_request": false,
+    "require_pull_request": true,
     "require_status_checks": [],
     "require_signed_commits": false,
     "require_linear_history": false,
