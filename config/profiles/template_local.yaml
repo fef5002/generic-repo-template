@@ -1,0 +1,12 @@
+# template_local.yaml — Copy this to config/profiles/local.yaml.
+# Settings here override base settings.yaml when --profile local is used.
+# This file is a safe example — your real local.yaml is in .gitignore.
+
+profile_name: local
+
+# Replace with the actual folder you want generate_sidecars.py to scan.
+# This path is personal to your machine, so it stays out of Git.
+scan_dir: /path/to/your/local/files
+
+# Set to true to turn on debug output by default for this profile.
+debug_by_default: false

@@ -1,0 +1,24 @@
+{
+  "name": "main-requires-pr",
+  "enforcement": "enabled",
+  "target": {
+    "branch_patterns": [
+      "main"
+    ]
+  },
+  "bypass_actors": [],
+  "rules": {
+    "block_force_pushes": true,
+    "block_deletions": true,
+    "restrict_creation": false,
+    "restrict_updates": false,
+    "require_pull_request": true,
+    "require_status_checks": [],
+    "require_signed_commits": false,
+    "require_linear_history": false,
+    "require_deployments": [],
+    "require_code_scanning": false,
+    "require_code_quality": false,
+    "copilot_code_review": false
+  }
+}
