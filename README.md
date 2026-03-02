@@ -5,8 +5,8 @@ A starter template with the basics already in place for cloud-first project deve
 Includes:
 
 - `.github/copilot-instructions.md` — Copilot custom instructions (vibe coder/designer context, cloud execution, whitelisted dev sites, code style, branching workflow, review checklist, config design, debugging, modularity, sidecar files, profile selection)
-- `.github/rulesets/main-requires-pr.json` — Requires a pull request to merge anything into `main`; blocks direct pushes and force-pushes
-- `.github/rulesets/multi-bot-open-branches.json` — Keeps `bot-*` and `copilot/*` branches open for direct bot commits while blocking force-pushes
+- `.github/rulesets/main-requires-pr.json` — GitHub ruleset template that, when applied via repository/organization settings or API, requires a pull request to merge anything into `main` and blocks direct pushes and force-pushes
+- `.github/rulesets/multi-bot-open-branches.json` — GitHub ruleset template that, when applied via repository/organization settings or API, keeps `bot-*` and `copilot/*` branches open for direct bot commits while blocking force-pushes
 - `.github/workflows/check.yml` — GitHub Actions workflow: installs dependencies and verifies all packages are importable on every push
 - `scripts/utils.py` — Shared helpers used by all scripts: debug logging, execution pausing, timestamped log files, config loading with profile support, and dependency checking
 - `scripts/generate_sidecars.py` — Scans a directory (local or cloud-mounted) and writes a `.yml` metadata sidecar file next to every file it finds

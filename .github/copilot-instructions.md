@@ -124,6 +124,7 @@ Before any code is merged into `main`, verify all of the following:
 Config files and scripts must detect their own environment rather than relying on hardcoded paths:
 
 - Resolve the project root dynamically (e.g. using `pathlib.Path(__file__).parent` in Python — this finds the folder containing the current script, wherever it is run from).
+- Resolve paths dynamically instead of hardcoding them. For example, in Python you can use `pathlib.Path(__file__).resolve().parent` to find the folder containing the current script, wherever it is run from. If you need the *project root*, start from that script folder and walk up until you find a known marker file like `pyproject.toml` or a `.git` directory.
 - Config files (e.g. `config/settings.yaml`) should use **relative paths** or **placeholder tokens** that get substituted at runtime.
 - Provide a `config/template_*.yaml` example alongside every real config file; real config files belong in `.gitignore`.
 - When a required config value is missing, the script should print a clear, friendly message explaining what to set and where — not crash silently.
