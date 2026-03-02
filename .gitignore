@@ -1,0 +1,24 @@
+# ─── Real config files ────────────────────────────────────────────────────────
+# Use the template_*.yaml files as examples; real configs stay off Git.
+config/settings.yaml
+config/profiles/local.yaml
+config/profiles/cloud.yaml
+.env
+
+# ─── Runtime logs ─────────────────────────────────────────────────────────────
+logs/*
+!logs/.gitkeep
+
+# ─── Python cache files ───────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+
+# ─── Virtual environments ─────────────────────────────────────────────────────
+.venv/
+venv/
+env/
+
+# ─── OS junk files ────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db

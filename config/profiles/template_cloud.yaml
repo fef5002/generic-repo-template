@@ -1,0 +1,13 @@
+# template_cloud.yaml — Copy this to config/profiles/cloud.yaml.
+# Settings here override base settings.yaml when --profile cloud is used.
+# This file is a safe example — your real cloud.yaml is in .gitignore.
+
+profile_name: cloud
+
+# Replace with the path to your mounted cloud drive.
+# For Google Drive via rclone this might be /gdrive/MyDrive.
+# For OneDrive it might be /mnt/onedrive or a mapped drive letter on Windows.
+scan_dir: /path/to/your/cloud/drive
+
+# Set to true to turn on debug output by default for this profile.
+debug_by_default: false

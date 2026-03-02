@@ -1,0 +1,42 @@
+# check.yml — Runs on every push to verify dependencies are installed correctly.
+# This is a basic sanity check that runs automatically in the cloud (GitHub Actions).
+# It installs packages from requirements.txt and then calls check_dependencies.py.
+
+name: Dependency Check
+
+on:
+  push:
+    branches:
+      - main
+      - "bot-*"
+      - "copilot/*"
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:   # lets you run this manually from the GitHub Actions tab
+
+jobs:
+  check-deps:
+    name: Check Python Dependencies
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      # Step 1 — Download the repository code
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      # Step 2 — Install Python
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # Step 3 — Install all packages listed in requirements.txt
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # Step 4 — Verify every package can actually be imported
+      - name: Verify all packages are importable
+        run: python scripts/check_dependencies.py

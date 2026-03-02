@@ -1,0 +1,20 @@
+# template_settings.yaml — Copy this to config/settings.yaml and fill in your values.
+# The real settings.yaml is listed in .gitignore and will NOT be committed to Git.
+#
+# All paths here should be relative to the project root or use the {PROJECT_ROOT}
+# placeholder — scripts replace it with the real path at runtime.
+
+# Which profile to load by default (matches a file in config/profiles/).
+# Override at runtime with the --profile flag.
+default_profile: local
+
+# Where to write timestamped log files.
+logs_dir: logs
+
+# Where generate_sidecars.py places sidecar files.
+# Leave blank ("") to place each sidecar next to its source file.
+sidecar_output_dir: ""
+
+# ─── Add your own project settings below ─────────────────────────────────────
+# project_name: my-project
+# api_endpoint: https://example.com/api

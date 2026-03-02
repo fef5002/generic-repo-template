@@ -63,11 +63,22 @@ New projects from this template should follow this structure:
 ```
 project-name/
 ├── .github/
-│   ├── copilot-instructions.md   # these instructions, copied forward
-│   └── rulesets/                 # branch protection rulesets
-├── config/                       # user-editable configuration files
-├── docs/                         # documentation and how-to guides
-├── scripts/                      # runnable Python scripts
+│   ├── copilot-instructions.md      # these instructions, copied forward
+│   ├── rulesets/                    # branch protection rulesets
+│   └── workflows/                   # GitHub Actions CI workflows
+├── config/
+│   ├── template_settings.yaml       # example base config (committed)
+│   └── profiles/
+│       ├── template_local.yaml      # example local profile (committed)
+│       └── template_cloud.yaml      # example cloud profile (committed)
+│   # real settings.yaml and profiles/ files → in .gitignore, never committed
+├── docs/                            # documentation and how-to guides
+├── logs/                            # runtime log files → in .gitignore
+├── scripts/
+│   ├── utils.py                     # shared helpers (debug, logging, config, deps)
+│   ├── generate_sidecars.py         # creates .yml sidecar files for a directory
+│   ├── check_dependencies.py        # checks all required packages are installed
+│   └── <your_script>.py             # one script per task
 ├── .gitignore
 ├── LICENSE
 ├── README.md
@@ -137,4 +148,26 @@ Code must be split into small, single-purpose modules so that any one part can b
 - Shared helper functions live in a dedicated `utils.py` (or a `utils/` package).
 - A top-level `main.py` or `run.py` may orchestrate the steps but should contain minimal logic itself — just the sequence of calls.
 - Avoid putting unrelated logic in the same function (a function is a named block of code that does one specific task). If a function is longer than ~30 lines, consider splitting it.
+
+## YAML Sidecar Files
+
+Every file in a project's data or output directories should have a companion `.yml` sidecar that records its metadata:
+
+- The sidecar lives next to its source file and shares its name with a `.yml` extension added (e.g. `report.pdf` → `report.pdf.yml`).
+- Sidecar content: `file`, `relative_path`, `size_bytes`, `last_modified`, `file_type`, `tags`, `description`.
+- Use `scripts/generate_sidecars.py --dir /path/to/folder` to generate or refresh sidecars for an entire directory tree.
+- Sidecars are idempotent — re-running the script only rewrites a sidecar when the source file has changed.
+- Sidecar files themselves are **never** given their own sidecar (the script skips `.yml` and `.yaml` files).
+
+## Profile Selection
+
+Scripts support multiple named configuration profiles so the same code runs correctly in different environments without any changes:
+
+- Profiles are stored in `config/profiles/<profile_name>.yaml` (e.g. `local.yaml`, `cloud.yaml`).
+- Each profile overrides specific values from the base `config/settings.yaml` (e.g. `scan_dir`, `debug_by_default`).
+- Select a profile at runtime with the `--profile` flag: `python scripts/my_script.py --profile cloud`.
+- Template profile files (`config/profiles/template_*.yaml`) are committed to the repo as examples.
+- Real profile files (`config/profiles/local.yaml`, `config/profiles/cloud.yaml`) contain personal paths and are listed in `.gitignore` — they are never committed.
+- When a profile file is missing, the script prints a friendly message explaining exactly which file to copy and fill in.
+
 

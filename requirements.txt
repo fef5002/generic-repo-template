@@ -1,0 +1,5 @@
+# Python packages required by scripts in this project.
+# Install all of them at once with:
+#   pip install -r requirements.txt
+
+pyyaml
