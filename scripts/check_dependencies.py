@@ -57,7 +57,7 @@ def check_requirements_file(req_file: Path, debug: bool = False):
 
     lines = req_file.read_text(encoding="utf-8").splitlines()
     # Skip blank lines and comments
-    packages = [l.strip() for l in lines if l.strip() and not l.startswith("#")]
+    packages = [line.strip() for line in lines if line.strip() and not line.startswith("#")]
 
     if not packages:
         print("No packages listed in requirements.txt — nothing to check.")
