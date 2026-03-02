@@ -1,0 +1,60 @@
+# Copilot: Project Template Requirements
+
+You are setting up a new repository created from this template.  
+Every project must begin with the following baseline structure and rules.
+
+## Branch Model
+Create and maintain long‑lived branches named after each AI that contributes code:
+- `copilot`
+- `codex`
+- `gemini`
+- `claude`
+- `sonnet`
+- `deepseek`
+- `mistral`
+
+These branches must:
+- Always exist.
+- Never be auto‑deleted.
+- Be treated as independent working branches, like separate programmers.
+- Allow direct commits without requiring pull requests.
+
+The `main` branch is the stable trunk.  
+No AI should commit directly to `main` unless explicitly instructed.
+
+## Repository Ruleset (to be applied by automation)
+Use the following ruleset configuration for `main` and all AI‑named branches:
+
+- Block force pushes: **enabled**
+- Restrict creation: **disabled**
+- Restrict updates: **disabled**
+- Restrict deletions: **disabled**
+- Require pull requests: **disabled**
+- Require status checks: **none**
+- Require signed commits: **disabled**
+- Require linear history: **disabled**
+- Require deployments: **none**
+- Require code scanning: **disabled**
+- Require code quality: **disabled**
+- Copilot code review auto‑request: **disabled**
+
+## Files to Include
+Ensure the repository contains:
+
+- `.github/rulesets/ai-branches.json`  
+  Contains the ruleset JSON matching the configuration above.
+
+- `.github/workflows/apply-ruleset.yml`  
+  A GitHub Action that applies the ruleset to the repo on first push and creates missing AI‑named branches.
+
+- `README.md`  
+  Must include a section explaining:
+  - the AI‑branch workflow,
+  - the purpose of long‑lived AI branches,
+  - how `main` acts as the stable trunk.
+
+## Behavior Expectations
+- Treat each AI branch as a separate contributor.
+- Never open PRs automatically.
+- Never delete branches automatically.
+- Keep the project structure minimal, stable, and predictable.
