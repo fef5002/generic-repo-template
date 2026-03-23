@@ -18,34 +18,44 @@ jobs:
       contents: write        # needed to create branches
       administration: write  # needed to create/update repository rulesets
 
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     steps:
-      # Step 1 — Download the repository code including all existing branches
+      # Step 1 — Download the repository code
       - name: Check out repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
-      # Step 2 — Create each AI-named branch if it does not already exist
+      # Step 2 — Create each AI-named branch if it does not already exist.
+      # Uses the GitHub API (gh CLI) so no git credential setup is required.
       - name: Create missing AI branches
         run: |
           AI_BRANCHES="copilot codex gemini claude sonnet deepseek mistral"
+
+          # Use the current commit SHA (already available from the checkout) as the
+          # starting point for new branches, so no extra API call is needed.
+          HEAD_SHA="${{ github.sha }}"
+
           for branch in $AI_BRANCHES; do
-            if git ls-remote --exit-code origin "$branch" > /dev/null 2>&1; then
+            if gh api "/repos/${{ github.repository }}/git/refs/heads/$branch" \
+                --silent 2>/dev/null; then
               echo "Branch '$branch' already exists — skipping."
             else
-              git checkout -b "$branch"
-              git push origin "$branch"
-              git checkout -
-              echo "✅  Created branch '$branch'."
+              gh api \
+                --method POST \
+                "/repos/${{ github.repository }}/git/refs" \
+                -f "ref=refs/heads/$branch" \
+                -f "sha=$HEAD_SHA" \
+                && echo "✅  Created branch '$branch'." \
+                || echo "⚠️  Could not create branch '$branch' — may already exist."
             fi
           done
 
       # Step 3 — Apply the ai-branches ruleset via the GitHub REST API.
       # Requires the GITHUB_TOKEN to have 'administration: write' permission.
-      # If the ruleset already exists this step is safely skipped.
+      # If the ruleset already exists, or if permissions are insufficient,
+      # this step prints a friendly warning and does NOT fail the job.
       - name: Apply ai-branches ruleset
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           RULESET_FILE=".github/rulesets/ai-branches.json"
           RULESET_NAME=$(jq -r '.name' "$RULESET_FILE")
