@@ -18,6 +18,39 @@ Includes:
 - `.gitignore` — Ignores real config files, log files, `.env`, and Python cache folders
 - `LICENSE` — MIT license
 
+## AI Branch Workflow
+
+This repository uses a **multi-AI branch model** where each AI contributor gets its own long-lived branch.
+
+### Branch names
+
+| Branch | Purpose |
+|--------|---------|
+| `copilot` | GitHub Copilot contributions |
+| `codex` | OpenAI Codex contributions |
+| `gemini` | Google Gemini contributions |
+| `claude` | Anthropic Claude contributions |
+| `sonnet` | Claude Sonnet contributions |
+| `deepseek` | DeepSeek contributions |
+| `mistral` | Mistral contributions |
+
+### Rules
+
+- Each AI branch is **long-lived** — it is never automatically deleted.
+- Each AI branch allows **direct commits** without requiring a pull request.
+- **Force-pushes are blocked** on all AI branches (to preserve history).
+- Only `main` requires a pull request before merging.
+
+### How `main` stays stable
+
+`main` is the **stable trunk**. AI agents commit freely to their own named branch, then open a pull request when work is ready. A human reviewer decides which PRs get merged into `main`. No AI commits directly to `main` unless explicitly instructed.
+
+### Automation
+
+The `.github/workflows/apply-ruleset.yml` workflow runs on every push to `main` and can be triggered manually. It:
+1. Creates any missing AI-named branches.
+2. Applies the `.github/rulesets/ai-branches.json` ruleset via the GitHub API so the rules above are enforced automatically.
+
 ## Quick Start
 
 ```bash

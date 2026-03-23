@@ -1,0 +1,23 @@
+{
+  "name": "ai-branches",
+  "enforcement": "active",
+  "conditions": {
+    "ref_name": {
+      "include": [
+        "refs/heads/copilot",
+        "refs/heads/codex",
+        "refs/heads/gemini",
+        "refs/heads/claude",
+        "refs/heads/sonnet",
+        "refs/heads/deepseek",
+        "refs/heads/mistral"
+      ],
+      "exclude": []
+    }
+  },
+  "rules": [
+    {
+      "type": "non_fast_forward"
+    }
+  ]
+}

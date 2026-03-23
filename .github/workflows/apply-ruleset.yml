@@ -1,0 +1,81 @@
+# apply-ruleset.yml — Runs on every push to main and on manual trigger.
+# Creates any missing AI-named branches and attempts to apply the ai-branches
+# ruleset via the GitHub API so settings are enforced automatically.
+
+name: Apply Ruleset & Create AI Branches
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:   # lets you run this manually from the GitHub Actions tab
+
+jobs:
+  setup:
+    name: Create AI branches and apply ai-branches ruleset
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write        # needed to create branches
+      administration: write  # needed to create/update repository rulesets
+
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      # Step 1 — Download the repository code
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      # Step 2 — Create each AI-named branch if it does not already exist.
+      # Uses the GitHub API (gh CLI) so no git credential setup is required.
+      - name: Create missing AI branches
+        run: |
+          AI_BRANCHES="copilot codex gemini claude sonnet deepseek mistral"
+
+          # Use the current commit SHA (already available from the checkout) as the
+          # starting point for new branches, so no extra API call is needed.
+          HEAD_SHA="${{ github.sha }}"
+
+          for branch in $AI_BRANCHES; do
+            if gh api "/repos/${{ github.repository }}/git/refs/heads/$branch" \
+                --silent 2>/dev/null; then
+              echo "Branch '$branch' already exists — skipping."
+            else
+              gh api \
+                --method POST \
+                "/repos/${{ github.repository }}/git/refs" \
+                -f "ref=refs/heads/$branch" \
+                -f "sha=$HEAD_SHA" \
+                && echo "✅  Created branch '$branch'." \
+                || echo "⚠️  Could not create branch '$branch' — may already exist."
+            fi
+          done
+
+      # Step 3 — Apply the ai-branches ruleset via the GitHub REST API.
+      # Requires the GITHUB_TOKEN to have 'administration: write' permission.
+      # If the ruleset already exists, or if permissions are insufficient,
+      # this step prints a friendly warning and does NOT fail the job.
+      - name: Apply ai-branches ruleset
+        run: |
+          RULESET_FILE=".github/rulesets/ai-branches.json"
+          RULESET_NAME=$(jq -r '.name' "$RULESET_FILE")
+
+          # Check whether the ruleset already exists
+          EXISTING_ID=$(gh api \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "/repos/${{ github.repository }}/rulesets" \
+            --jq ".[] | select(.name == \"$RULESET_NAME\") | .id" 2>/dev/null || true)
+
+          if [ -n "$EXISTING_ID" ]; then
+            echo "Ruleset '$RULESET_NAME' already exists (id=$EXISTING_ID) — skipping."
+          else
+            gh api \
+              --method POST \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "/repos/${{ github.repository }}/rulesets" \
+              --input "$RULESET_FILE" \
+              && echo "✅  Ruleset '$RULESET_NAME' applied." \
+              || echo "⚠️  Could not apply ruleset automatically. Apply it manually via Settings → Rules → Rulesets."
+          fi
